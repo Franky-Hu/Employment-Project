@@ -1,0 +1,14 @@
+select year, avg(annual) as avg_emp from industry3 group by year
+select industry_title, avg(annual) as avg_emp from industry3 group by industry_title
+
+select year, percentile_approx(annual,0.5) as median from industry4 group by year
+select industry_title, percentile_approx(annual,0.5) as median from industry4 group by industry_title
+
+select year, stddev(annual) as std from industry3 group by year
+select industry_title, stddev(annual) as std from industry3 group by industry_title
+
+create table industry5 as with stats as (select year, AVG(annual) as mean, stddev(annual) as stddev from industry4 group by year) select i.* from industry4 i join stats s oni.year = s.year where abs(i.annual - s.mean) <= 3 * s.stddev;
+
+insert pverwrite directory 'your_path' ROW FORMAT delimited fields terminated by ',' stored as textfile select * from industry5;
+
+CREATE TABLE industry6 AS SELECT year, LOWER(TRIM(REPLACE(indstry_title, ' ', ''))) AS industry_title_cleaned, annual FROM industry5

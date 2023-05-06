@@ -1,0 +1,42 @@
+import org.apache.spark.ml.regression.LinearRegression
+import org.apache.spark.ml.feature.VectorAssembler
+import org.apache.spark.sql.SparkSession
+import org.apache.spark.sql.functions._
+import org.apache.spark.ml.evaluation.RegressionEvaluator
+
+
+
+
+// Load training data
+val training = spark.read.option("header", "true").csv("final_code/Average_476.csv")
+
+val training1 = training.withColumn("emp_n", col("avg_employment").cast("double")).select("year", "emp_n")
+
+val training2 = training1.withColumn("year_int", col("year").cast("int")).select("year_int", "emp_n")
+
+val assembler = new VectorAssembler().setInputCols(Array("year_int")).setOutputCol("new_col")
+
+val spark = SparkSession.builder.appName("LinearRegression").getOrCreate()
+
+val assembler = new VectorAssembler().setInputCols(Array("year_int")).setOutputCol("new_col")
+
+val training3 = assembler.transform(training2)
+
+val Array(train, test) = training3.randomSplit(Array(0.7, 0.3), seed = 1234)
+
+val lr_model = new LinearRegression().setLabelCol("emp_n").setFeaturesCol("new_col")
+
+val eval = new RegressionEvaluator().setLabelCol("emp_n").setPredictionCol("y_pred").setMetricName("rmse")
+
+val pred = lr_model1.transform(test)
+
+val training_summary = lr_model1.summary
+
+println(s"RMSE: ${training_summary.rootMeanSquaredError}")
+
+println(s"r2: ${training_summary.r2}")
+
+
+#Idea get from https://spark.apache.org/docs/latest/ml-classification-regression.html#linear-regression
+#Usage of functions helped by ChatGpt
+
