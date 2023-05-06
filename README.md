@@ -6,4 +6,4 @@ The Extraction+Brief Insight. txt file is what I use do a shallow insight.
 
 All files should be run on an HPC terminal.
 
-Thanks to the help of Professor Malvalet(NYU).
+Thanks to the help of Professor Malavet(NYU).
